@@ -2,8 +2,32 @@ import pytube
 import subprocess
 import os 
 import sys 
-#url = 'https://youtu.be/LXb3EKWsInQ'
+# url = 'https://www.youtube.com/watch?v=GqD7_h6Hwl4'
 url = sys.argv[1]
+
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
+
+
 
 prevprog=0 
 def progress_function(stream, chunk, bytes_remaining):
@@ -13,7 +37,9 @@ def progress_function(stream, chunk, bytes_remaining):
     liveprog=(int)(downloaded /tot *100)
     if liveprog > prevprog:
         prevprog=liveprog
-        print(str(liveprog)+" % Completed") 
+        # print(str(liveprog)+" % Completed") 
+        printProgressBar(liveprog, 100, prefix = 'Progress:', suffix = 'Complete', length = 50)
+
 
 
 youtube = pytube.YouTube(url,on_progress_callback=progress_function)
